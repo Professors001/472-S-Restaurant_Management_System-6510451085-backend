@@ -20,6 +20,27 @@ jobs:
           tools: composer:v2
           coverage: none
 
+      # Setup directory for Apache config
+      - name: Create Apache config directory
+        run: mkdir -p docker/apache
+
+      # Create Apache config file
+      - name: Create Apache config file
+        run: |
+          cat > docker/apache/000-default.conf << 'EOL'
+          <VirtualHost *:80>
+              DocumentRoot /var/www/html/public
+
+              <Directory "/var/www/html/public">
+                  AllowOverride All
+                  Require all granted
+              </Directory>
+
+              ErrorLog ${APACHE_LOG_DIR}/error.log
+              CustomLog ${APACHE_LOG_DIR}/access.log combined
+          </VirtualHost>
+          EOL
+
       # Install PHP dependencies
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
