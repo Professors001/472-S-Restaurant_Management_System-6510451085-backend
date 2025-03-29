@@ -23,8 +23,8 @@ RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Create system user to run Composer and Artisan Commands
-RUN useradd -G www-data,root -u 1000 -d /home/www-data www-data
+# Create system user if it doesn't exist yet
+RUN id -u www-data &>/dev/null || useradd -G www-data,root -u 1000 -d /home/www-data www-data
 RUN mkdir -p /home/www-data/.composer && \
     chown -R www-data:www-data /home/www-data
 
